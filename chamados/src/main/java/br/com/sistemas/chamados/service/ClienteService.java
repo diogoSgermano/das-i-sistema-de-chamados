@@ -43,7 +43,7 @@ public class ClienteService {
     @Transactional
     public ClienteResponse atualizar(Long id, ClienteRequest dto) {
         Cliente cliente = buscarEntity(id);
-        if (repository.existsByEmailAndIdNot(dto.email(), id)) {
+        if (repository.existsByEmailAndIdClienteNot(dto.email(), id)) {
             throw new RegraNegocioException("Já existe cliente com o e-mail " + dto.email());
         }
         cliente.setNome(dto.nome());

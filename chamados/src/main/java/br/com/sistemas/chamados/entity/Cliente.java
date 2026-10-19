@@ -17,7 +17,8 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name="id_cliente")
+    private Long idCliente;
 
     @NotBlank(message = "Nome é obrigatório")
     @Size(max = 100, message = "Nome deve ter no máximo 100 caracteres")
@@ -33,7 +34,6 @@ public class Cliente {
     @Column(length = 20)
     private String telefone;
 
-    
     public Cliente() {
     }
 
@@ -52,12 +52,12 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public Long getId() {
-        return id;
+    public Long getIdCliente() {
+        return idCliente;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdCliente(Long idCliente) {
+        this.idCliente = idCliente;
     }
 
     public String getEmail() {

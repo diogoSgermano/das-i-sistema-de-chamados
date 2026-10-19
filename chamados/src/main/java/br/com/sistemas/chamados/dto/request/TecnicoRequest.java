@@ -1,8 +1,9 @@
-
 package br.com.sistemas.chamados.dto.request;
 
+import br.com.sistemas.chamados.enums.PerfilTecnico;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record TecnicoRequest(
@@ -16,9 +17,8 @@ public record TecnicoRequest(
         @Size(max = 120, message = "E-mail deve ter no máximo 120 caracteres")
         String email,
 
-        @NotBlank(message = "Perfil é obrigatório")
-        @Size(max = 50, message = "Perfil deve ter no máximo 50 caracteres")
-        String perfil
+        @NotNull(message = "Perfil é obrigatório")
+        PerfilTecnico perfil
 
 ) {
 }

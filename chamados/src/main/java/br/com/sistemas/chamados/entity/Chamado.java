@@ -3,7 +3,7 @@ package br.com.sistemas.chamados.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -93,6 +93,18 @@ public class Chamado {
         this.categoria = categoria;
         this.tecnico = tecnico;
     }
+
+    @PrePersist
+    protected void prePersist() {
+        if (this.dataAbertura == null) {
+            this.dataAbertura = LocalDateTime.now();
+        }
+
+        if (this.status == null || this.status.isBlank()) {
+            this.status = "ABERTO";
+        }
+    }
+
 
     public Long getIdChamado() {
         return idChamado;

@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.sistemas.chamados.dto.request.ClienteRequest;
+import br.com.sistemas.chamados.dto.response.ChamadoResponse;
 import br.com.sistemas.chamados.dto.response.ClienteResponse;
+import br.com.sistemas.chamados.service.ChamadoService;
 import br.com.sistemas.chamados.service.ClienteService;
 import jakarta.validation.Valid;
 
@@ -23,9 +25,11 @@ import jakarta.validation.Valid;
 public class ClienteController {
 
     private final ClienteService service;
+    private final ChamadoService chamadoService;
 
-    public ClienteController(ClienteService service) {
+    public ClienteController(ClienteService service, ChamadoService chamadoService) {
         this.service = service;
+        this.chamadoService = chamadoService;
     }
 
     @PostMapping
@@ -57,4 +61,10 @@ public class ClienteController {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
-}
+
+    /** GET /clientes/{id}/chamados — lista chamados de um cliente (13.5) */
+    @GetMapping("/{id}/chamados")
+    public List<ChamadoResponse> listarChamados(@PathVariable Long id) {
+        return chamadoService.listarPorCliente(id);
+    }
+}

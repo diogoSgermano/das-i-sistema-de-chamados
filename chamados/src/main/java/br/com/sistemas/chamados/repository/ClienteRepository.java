@@ -7,7 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     boolean existsByEmail(String email);
-    boolean existsByEmailAndIdNot(String email, Long idCliente);
-
     boolean existsByEmailAndIdClienteNot(@NotBlank(message = "E-mail é obrigatório") @Email(message = "E-mail inválido") String email, Long id);
 }

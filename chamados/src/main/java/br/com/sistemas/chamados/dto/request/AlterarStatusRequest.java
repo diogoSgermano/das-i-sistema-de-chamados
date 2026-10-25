@@ -1,0 +1,10 @@
+package br.com.sistemas.chamados.dto.request;
+
+import br.com.sistemas.chamados.enums.StatusChamado;
+import jakarta.validation.constraints.NotNull;
+
+public record AlterarStatusRequest(
+        @NotNull(message = "Status é obrigatório")
+        StatusChamado status
+) {
+}

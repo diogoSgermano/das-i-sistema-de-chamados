@@ -4,8 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.sistemas.chamados.enums.Prioridade;
+import br.com.sistemas.chamados.enums.StatusChamado;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -36,22 +41,20 @@ public class Chamado {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String descricao;
 
-    @NotNull(message = "Data de abertura é obrigatória")
     @Column(name = "data_abertura", nullable = false)
     private LocalDateTime dataAbertura;
 
     @Column(name = "data_fechamento")
     private LocalDateTime dataFechamento;
 
-    @NotBlank(message = "Prioridade é obrigatória")
-    @Size(max = 30, message = "Prioridade deve ter no máximo 30 caracteres")
+    @NotNull(message = "Prioridade é obrigatória")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String prioridade;
+    private Prioridade prioridade;
 
-    @NotBlank(message = "Status é obrigatório")
-    @Size(max = 30, message = "Status deve ter no máximo 30 caracteres")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String status;
+    private StatusChamado status;
 
     @NotNull(message = "Cliente é obrigatório")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -76,22 +79,26 @@ public class Chamado {
     public Chamado(
             String titulo,
             String descricao,
-            LocalDateTime dataAbertura,
-            LocalDateTime dataFechamento,
-            String prioridade,
-            String status,
+            Prioridade prioridade,
             Cliente cliente,
             Categoria categoria,
             Tecnico tecnico) {
         this.titulo = titulo;
         this.descricao = descricao;
-        this.dataAbertura = dataAbertura;
-        this.dataFechamento = dataFechamento;
         this.prioridade = prioridade;
-        this.status = status;
         this.cliente = cliente;
         this.categoria = categoria;
         this.tecnico = tecnico;
+    }
+
+    @PrePersist
+    protected void prePersist() {
+        if (this.dataAbertura == null) {
+            this.dataAbertura = LocalDateTime.now();
+        }
+        if (this.status == null) {
+            this.status = StatusChamado.ABERTO;
+        }
     }
 
     public Long getIdChamado() {
@@ -134,19 +141,19 @@ public class Chamado {
         this.dataFechamento = dataFechamento;
     }
 
-    public String getPrioridade() {
+    public Prioridade getPrioridade() {
         return prioridade;
     }
 
-    public void setPrioridade(String prioridade) {
+    public void setPrioridade(Prioridade prioridade) {
         this.prioridade = prioridade;
     }
 
-    public String getStatus() {
+    public StatusChamado getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusChamado status) {
         this.status = status;
     }
 

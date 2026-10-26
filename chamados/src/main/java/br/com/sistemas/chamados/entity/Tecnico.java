@@ -1,14 +1,11 @@
 
 package br.com.sistemas.chamados.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import br.com.sistemas.chamados.enums.PerfilTecnico;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -31,15 +28,15 @@ public class Tecnico {
     @Column(nullable = false, unique = true, length = 120)
     private String email;
 
-    @NotBlank(message = "Perfil é obrigatório")
-    @Size(max = 50, message = "Perfil deve ter no máximo 50 caracteres")
+    @NotNull(message = "Perfil é obrigatório")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String perfil;
+    private PerfilTecnico perfil;
 
     public Tecnico() {
     }
 
-    public Tecnico(String nome, String email, String perfil) {
+    public Tecnico(String nome, String email, PerfilTecnico perfil) {
         this.nome = nome;
         this.email = email;
         this.perfil = perfil;
@@ -69,11 +66,11 @@ public class Tecnico {
         this.email = email;
     }
 
-    public String getPerfil() {
+    public PerfilTecnico getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(String perfil) {
+    public void setPerfil(PerfilTecnico perfil) {
         this.perfil = perfil;
     }
 }

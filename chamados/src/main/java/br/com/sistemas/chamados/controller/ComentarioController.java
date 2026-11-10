@@ -4,19 +4,22 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.com.sistemas.chamados.dto.request.ComentarioRequest;
 import br.com.sistemas.chamados.dto.response.ComentarioResponse;
 import br.com.sistemas.chamados.service.ComentarioService;
 import jakarta.validation.Valid;
 
-@RestController
+@Controller
 @RequestMapping("/chamados/{chamadoId}/comentarios")
 public class ComentarioController {
 
@@ -26,7 +29,12 @@ public class ComentarioController {
         this.service = service;
     }
 
-    @PostMapping
+    // -------------------------------------------------------------------------
+    // Endpoints REST (JSON)
+    // -------------------------------------------------------------------------
+
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    @ResponseBody
     public ResponseEntity<ComentarioResponse> criar(
             @PathVariable Long chamadoId,
             @Valid @RequestBody ComentarioRequest dto) {
@@ -34,8 +42,22 @@ public class ComentarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
-    @GetMapping
-    public List<ComentarioResponse> listar(@PathVariable Long chamadoId) {
+    @GetMapping(produces = "application/json")
+    @ResponseBody
+    public List<ComentarioResponse> listarJson(@PathVariable Long chamadoId) {
         return service.listarPorChamado(chamadoId);
+    }
+
+    // -------------------------------------------------------------------------
+    // Endpoints Web (Thymeleaf)
+    // -------------------------------------------------------------------------
+
+    @PostMapping(consumes = "application/x-www-form-urlencoded")
+    public String salvarWeb(
+            @PathVariable Long chamadoId,
+            @RequestParam String texto,
+            @RequestParam String autor) {
+        service.criar(chamadoId, new ComentarioRequest(texto, autor));
+        return "redirect:/chamados/" + chamadoId + "/detalhe";
     }
 }

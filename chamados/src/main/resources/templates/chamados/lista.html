@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{fragments/layout :: head('Chamados')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container-fluid px-4 py-4">
+
+    <div class="page-header d-flex align-items-center justify-content-between">
+        <h1>Chamados</h1>
+        <a th:href="@{/chamados/novo}" class="btn btn-primary btn-sm">Novo Chamado</a>
+    </div>
+
+    <!-- Filtros -->
+    <form th:action="@{/chamados}" method="get" class="card mb-3">
+        <div class="card-body py-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-sm-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">Todos</option>
+                        <option th:each="s : ${statusList}"
+                                th:value="${s}"
+                                th:text="${s}"
+                                th:selected="${s == statusSel}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="form-label">Prioridade</label>
+                    <select name="prioridade" class="form-select form-select-sm">
+                        <option value="">Todas</option>
+                        <option th:each="p : ${prioridades}"
+                                th:value="${p}"
+                                th:text="${p}"
+                                th:selected="${p == prioridadeSel}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="form-label">Cliente</label>
+                    <select name="clienteId" class="form-select form-select-sm">
+                        <option value="">Todos</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.id}"
+                                th:text="${c.nome}"
+                                th:selected="${c.id == clienteIdSel}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+                    <a th:href="@{/chamados}" class="btn btn-secondary btn-sm">Limpar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabela -->
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0" th:if="${chamados != null and chamados.totalElements > 0}">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Titulo</th>
+                        <th>Cliente</th>
+                        <th>Categoria</th>
+                        <th>Prioridade</th>
+                        <th>Status</th>
+                        <th>Tecnico</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ch : ${chamados.content}">
+                        <td class="text-muted" th:text="${ch.idChamado}"></td>
+                        <td>
+                            <a th:href="@{/chamados/{id}/detalhe(id=${ch.idChamado})}"
+                               th:text="${ch.titulo}"
+                               style="color:#e0e0e0; text-decoration:none;"></a>
+                        </td>
+                        <td th:text="${ch.clienteNome}"></td>
+                        <td th:text="${ch.categoriaNome}"></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${ch.prioridade.name() == 'CRITICA'} ? 'bg-danger' :
+                                                  (${ch.prioridade.name() == 'ALTA'} ? 'bg-warning text-dark' :
+                                                  (${ch.prioridade.name() == 'MEDIA'} ? 'bg-secondary' : 'bg-dark border'))"
+                                  th:text="${ch.prioridade}">
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${ch.status.name() == 'FECHADO'} ? 'bg-dark border' :
+                                                  (${ch.status.name() == 'EM_ATENDIMENTO'} ? 'bg-secondary' :
+                                                  (${ch.status.name() == 'AGUARDANDO_CLIENTE'} ? 'bg-warning text-dark' : 'bg-dark border text-white'))"
+                                  th:text="${ch.status}">
+                            </span>
+                        </td>
+                        <td th:text="${ch.tecnicoNome != null ? ch.tecnicoNome : '-'}"></td>
+                        <td class="text-end">
+                            <a th:href="@{/chamados/{id}/detalhe(id=${ch.idChamado})}"
+                               class="btn btn-secondary btn-sm me-1">Detalhe</a>
+                            <a th:href="@{/chamados/{id}/editar(id=${ch.idChamado})}"
+                               class="btn btn-secondary btn-sm me-1">Editar</a>
+                            <form th:action="@{/chamados/{id}/excluir(id=${ch.idChamado})}"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('Confirma exclusao?')">
+                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="p-4 text-muted text-center"
+                 th:if="${chamados == null or chamados.totalElements == 0}">
+                Nenhum chamado encontrado.
+            </div>
+        </div>
+
+        <!-- Paginacao -->
+        <div class="card-footer py-2 px-3 d-flex justify-content-between align-items-center"
+             th:if="${chamados != null and chamados.totalPages > 1}">
+            <span class="text-muted" style="font-size:0.8rem;"
+                  th:text="'Pagina ' + (${chamados.number} + 1) + ' de ' + ${chamados.totalPages}">
+            </span>
+            <div class="d-flex gap-1">
+                <a th:href="@{/chamados(page=${chamados.number - 1}, status=${statusSel}, prioridade=${prioridadeSel}, clienteId=${clienteIdSel})}"
+                   class="btn btn-secondary btn-sm"
+                   th:classappend="${chamados.first} ? 'disabled'">Anterior</a>
+                <a th:href="@{/chamados(page=${chamados.number + 1}, status=${statusSel}, prioridade=${prioridadeSel}, clienteId=${clienteIdSel})}"
+                   class="btn btn-secondary btn-sm"
+                   th:classappend="${chamados.last} ? 'disabled'">Proximo</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

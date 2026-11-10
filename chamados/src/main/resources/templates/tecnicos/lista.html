@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head th:replace="~{fragments/layout :: head('Tecnicos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container-fluid px-4 py-4">
+
+    <div class="page-header d-flex align-items-center justify-content-between">
+        <h1>Tecnicos</h1>
+        <a th:href="@{/tecnicos/novo}" class="btn btn-primary btn-sm">Novo Tecnico</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0" th:if="${not #lists.isEmpty(tecnicos)}">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="t : ${tecnicos}">
+                        <td class="text-muted" th:text="${t.idTecnico}"></td>
+                        <td th:text="${t.nome}"></td>
+                        <td th:text="${t.email}"></td>
+                        <td>
+                            <span class="badge bg-secondary" th:text="${t.perfil}"></span>
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/tecnicos/{id}/editar(id=${t.idTecnico})}"
+                               class="btn btn-secondary btn-sm me-1">Editar</a>
+                            <form th:action="@{/tecnicos/{id}/excluir(id=${t.idTecnico})}"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('Confirma exclusao?')">
+                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="p-4 text-muted text-center" th:if="${#lists.isEmpty(tecnicos)}">
+                Nenhum tecnico cadastrado.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

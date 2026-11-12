@@ -1,8 +1,9 @@
 package br.com.sistemas.chamados.controller;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,19 +39,18 @@ import jakarta.validation.Valid;
 public class ChamadoController {
 
     private final ChamadoService service;
-    private final ClienteService clienteService;
-    private final CategoriaService categoriaService;
-    private final TecnicoService tecnicoService;
 
-    public ChamadoController(
-            ChamadoService service,
-            ClienteService clienteService,
-            CategoriaService categoriaService,
-            TecnicoService tecnicoService) {
+    @Autowired(required = false)
+    private ClienteService clienteService;
+
+    @Autowired(required = false)
+    private CategoriaService categoriaService;
+
+    @Autowired(required = false)
+    private TecnicoService tecnicoService;
+
+    public ChamadoController(ChamadoService service) {
         this.service = service;
-        this.clienteService = clienteService;
-        this.categoriaService = categoriaService;
-        this.tecnicoService = tecnicoService;
     }
 
     // -------------------------------------------------------------------------
@@ -128,7 +128,7 @@ public class ChamadoController {
         model.addAttribute("chamados", service.listar(status, prioridade, clienteId, pageable));
         model.addAttribute("statusList", StatusChamado.values());
         model.addAttribute("prioridades", Prioridade.values());
-        model.addAttribute("clientes", clienteService.listar());
+        model.addAttribute("clientes", clienteService != null ? clienteService.listar() : Collections.emptyList());
         model.addAttribute("statusSel", status);
         model.addAttribute("prioridadeSel", prioridade);
         model.addAttribute("clienteIdSel", clienteId);
@@ -137,9 +137,9 @@ public class ChamadoController {
 
     @GetMapping("/novo")
     public String paginaNovo(Model model) {
-        model.addAttribute("clientes", clienteService.listar());
-        model.addAttribute("categorias", categoriaService.listarTodas());
-        model.addAttribute("tecnicos", tecnicoService.listar());
+        model.addAttribute("clientes", clienteService != null ? clienteService.listar() : Collections.emptyList());
+        model.addAttribute("categorias", categoriaService != null ? categoriaService.listarTodas() : Collections.emptyList());
+        model.addAttribute("tecnicos", tecnicoService != null ? tecnicoService.listar() : Collections.emptyList());
         model.addAttribute("prioridades", Prioridade.values());
         return "chamados/form";
     }
@@ -147,9 +147,9 @@ public class ChamadoController {
     @GetMapping("/{id}/editar")
     public String paginaEditar(@PathVariable Long id, Model model) {
         model.addAttribute("chamado", service.buscar(id));
-        model.addAttribute("clientes", clienteService.listar());
-        model.addAttribute("categorias", categoriaService.listarTodas());
-        model.addAttribute("tecnicos", tecnicoService.listar());
+        model.addAttribute("clientes", clienteService != null ? clienteService.listar() : Collections.emptyList());
+        model.addAttribute("categorias", categoriaService != null ? categoriaService.listarTodas() : Collections.emptyList());
+        model.addAttribute("tecnicos", tecnicoService != null ? tecnicoService.listar() : Collections.emptyList());
         model.addAttribute("prioridades", Prioridade.values());
         return "chamados/form";
     }
@@ -157,7 +157,7 @@ public class ChamadoController {
     @GetMapping("/{id}/detalhe")
     public String paginaDetalhe(@PathVariable Long id, Model model) {
         model.addAttribute("chamado", service.buscar(id));
-        model.addAttribute("tecnicos", tecnicoService.listar());
+        model.addAttribute("tecnicos", tecnicoService != null ? tecnicoService.listar() : Collections.emptyList());
         model.addAttribute("statusList", StatusChamado.values());
         return "chamados/detalhe";
     }

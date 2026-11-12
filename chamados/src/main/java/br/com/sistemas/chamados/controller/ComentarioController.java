@@ -20,7 +20,7 @@ import br.com.sistemas.chamados.service.ComentarioService;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/chamados/{chamadoId}/comentarios")
+@RequestMapping("/chamados/{chamadoId:\\d+}/comentarios")
 public class ComentarioController {
 
     private final ComentarioService service;

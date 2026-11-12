@@ -53,13 +53,13 @@ public class ClienteController {
         return service.listar();
     }
 
-    @GetMapping(value = "/{id}", produces = "application/json")
+    @GetMapping(value = "/{id:\\d+}", produces = "application/json")
     @ResponseBody
     public ClienteResponse buscarJson(@PathVariable Long id) {
         return service.buscar(id);
     }
 
-    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
+    @PutMapping(value = "/{id:\\d+}", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public ClienteResponse atualizar(
             @PathVariable Long id,
@@ -67,14 +67,14 @@ public class ClienteController {
         return service.atualizar(id, dto);
     }
 
-    @DeleteMapping(value = "/{id}", produces = "application/json")
+    @DeleteMapping(value = "/{id:\\d+}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/{id}/chamados", produces = "application/json")
+    @GetMapping(value = "/{id:\\d+}/chamados", produces = "application/json")
     @ResponseBody
     public List<ChamadoResponse> listarChamados(@PathVariable Long id) {
         return chamadoService.listarPorCliente(id);
@@ -95,7 +95,7 @@ public class ClienteController {
         return "clientes/form";
     }
 
-    @GetMapping("/{id}/editar")
+    @GetMapping("/{id:\\d+}/editar")
     public String paginaEditar(@PathVariable Long id, Model model) {
         model.addAttribute("cliente", service.buscar(id));
         return "clientes/form";
@@ -110,7 +110,7 @@ public class ClienteController {
         return "redirect:/clientes";
     }
 
-    @PostMapping(value = "/{id}/atualizar", consumes = "application/x-www-form-urlencoded")
+    @PostMapping(value = "/{id:\\d+}/atualizar", consumes = "application/x-www-form-urlencoded")
     public String atualizar(
             @PathVariable Long id,
             @RequestParam String nome,
@@ -120,7 +120,7 @@ public class ClienteController {
         return "redirect:/clientes";
     }
 
-    @PostMapping("/{id}/excluir")
+    @PostMapping("/{id:\\d+}/excluir")
     public String excluirWeb(@PathVariable Long id) {
         service.excluir(id);
         return "redirect:/clientes";

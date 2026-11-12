@@ -52,13 +52,13 @@ public class TecnicoController {
         return service.listar();
     }
 
-    @GetMapping(value = "/{id}", produces = "application/json")
+    @GetMapping(value = "/{id:\\d+}", produces = "application/json")
     @ResponseBody
     public TecnicoResponse buscarJson(@PathVariable Long id) {
         return service.buscar(id);
     }
 
-    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
+    @PutMapping(value = "/{id:\\d+}", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public TecnicoResponse atualizar(
             @PathVariable Long id,
@@ -66,7 +66,7 @@ public class TecnicoController {
         return service.atualizar(id, dto);
     }
 
-    @DeleteMapping(value = "/{id}", produces = "application/json")
+    @DeleteMapping(value = "/{id:\\d+}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.excluir(id);
@@ -89,7 +89,7 @@ public class TecnicoController {
         return "tecnicos/form";
     }
 
-    @GetMapping("/{id}/editar")
+    @GetMapping("/{id:\\d+}/editar")
     public String paginaEditar(@PathVariable Long id, Model model) {
         model.addAttribute("tecnico", service.buscar(id));
         model.addAttribute("perfis", PerfilTecnico.values());
@@ -105,7 +105,7 @@ public class TecnicoController {
         return "redirect:/tecnicos";
     }
 
-    @PostMapping(value = "/{id}/atualizar", consumes = "application/x-www-form-urlencoded")
+    @PostMapping(value = "/{id:\\d+}/atualizar", consumes = "application/x-www-form-urlencoded")
     public String atualizar(
             @PathVariable Long id,
             @RequestParam String nome,
@@ -115,7 +115,7 @@ public class TecnicoController {
         return "redirect:/tecnicos";
     }
 
-    @PostMapping("/{id}/excluir")
+    @PostMapping("/{id:\\d+}/excluir")
     public String excluirWeb(@PathVariable Long id) {
         service.excluir(id);
         return "redirect:/tecnicos";
